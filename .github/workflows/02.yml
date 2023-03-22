@@ -69,11 +69,11 @@ jobs:
         SL_FTP: ${{ secrets.SL_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
-        go-ul ftp -d 'UL/' -r -u '${{ env.SL_FTP }}/SFF' -O
-        go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/SFFraw' -O
         go-ul pixeldrain catbox ftp gofile anonfiles -d 'UL/' -r -u '${{ env.VOE_FTP }}/SFF/${{github.event.inputs.filename}}' -o 'output/link.txt'
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]'))_${{github.event.inputs.filename}}.txt"
+        go-ul ftp -d 'UL/' -r -u '${{ env.SL_FTP }}/SFF' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -O
+      # go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/SFFraw' -O
     - name: Uploading to FTP
       if: ${{github.event.inputs.ftp_only == 'true'}}
       env:
@@ -82,9 +82,9 @@ jobs:
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
         go-ul ftp -d 'UL/' -r -u '${{ env.SL_FTP }}/SFF' -O
-        go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/SFFraw' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/SFF/${{github.event.inputs.filename}}' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -O
+      # go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/SFFraw' -O
     - name: Send file to discord
       if: ${{github.event.inputs.discord == 'true'}}
       uses: sinshutu/upload-to-discord@master
