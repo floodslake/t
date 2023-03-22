@@ -57,13 +57,15 @@ jobs:
         VOE_FTP: ${{ secrets.VOE_FTP }}
         SL_FTP: ${{ secrets.SL_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
+        UC_FTP: ${{ secrets.UC_FTP }}
       run: |
         go-ul catbox ftp gofile anonfiles pixeldrain -d 'UL/' -r -u '${{ env.FTP_1F }}' -O -o 'output/link.txt'
         mv 'output/link.txt' 'output/${{github.event.inputs.filename}}.txt'
+        go-ul ftp -d 'UL/' -r -u '${{ env.UC_FTP }}/twitcast' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/twitcast' -O
         mv *.ts DL/
-        go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/twitcast' -O
-        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
+     #  go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/twitcast' -O
+     #  go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
      #  url --upload-file "UL/*.mp4" "https://transfer.sh/${{github.event.inputs.filename}}.mp4" >> 'output/${{github.event.inputs.filename}}.txt'
      #  go-ul pixeldrain gofile anonfiles catbox ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/twitcast' -o 'output/link.txt'
     - name: Send file to discord
