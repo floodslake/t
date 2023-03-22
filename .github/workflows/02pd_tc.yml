@@ -1,0 +1,61 @@
+name: 02-DL-SFF_PD
+on: 
+  schedule:
+    - cron: "50 5 * * 1"
+    - cron: "50 5 * * 3,4,5"
+    - cron: "50 15 * * 6"
+    - cron: "50 4 * * 0"
+  workflow_dispatch:
+jobs:
+  SFFDL:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.8"
+    - name: Installing
+      run : |
+        sudo apt update -y
+        sudo pip install streamlink
+        sudo wget -q 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz'
+        sudo tar xvf ffmpeg-master-latest-linux64-gpl.tar.xz
+        sudo chmod a+rx ffmpeg-master-latest-linux64-gpl/bin/ffmpeg ffmpeg-master-latest-linux64-gpl/bin/ffprobe
+        sudo mv ffmpeg-master-latest-linux64-gpl/bin/ffmpeg ffmpeg-master-latest-linux64-gpl/bin/ffprobe /usr/local/bin/
+        sudo rm -rf ffmpeg-master-latest-linux64-gpl ffmpeg-master-latest-linux64-gpl.tar.xz
+        sudo chmod a+rx go-ul
+        sudo cp go-ul /usr/local/bin/go-ul
+        sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
+        echo $(date +'[%Y-%m-%d]') ${{ secrets.NAME_PD }}> 'output/link.txt'
+    - name: Downloading
+      env:
+        FILE_NAME: ${{ secrets.NAME_PD }}
+        M3U8_URL: ${{ secrets.URL_TC_PD }}
+        AUDIO_ONLY: true
+        VIDEO_ONLY: false
+        USE_FFMEG: false
+        REFERER: ${{ secrets.URL_TC_PD }}
+      run: python SFFDL.py
+    - name: Uploading
+      env:
+        VOE_UC: ${{ secrets.UC_FTP }}
+        SL_FTP: ${{ secrets.SL_FTP }}
+        FTP_1F: ${{ secrets.FTP_1F }}
+      run: |
+        go-ul pixeldrain anonfiles gofile ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -o 'output/link.txt'
+        mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]'))_${{ secrets.NAME_PD }}.txt"
+        go-ul ftp -d 'UL/' -r -u '${{ env.UC_FTP }}/SFF' -O
+        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
+        go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/SFFraw' -O
+    - name: Send file to discord
+      uses: sinshutu/upload-to-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_SFF }}
+      with:
+        args: output/*.txt
+    - name: Upload link
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ secrets.NAME_PD }}
+        path: output/*.txt

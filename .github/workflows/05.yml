@@ -1,0 +1,34 @@
+name: 05-DL-T
+on: 
+  workflow_dispatch:
+    inputs:
+      magnet:
+        required: true
+        description: Filename
+jobs:
+  T-DL:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Requirements
+      run : |
+        sudo apt update
+        sudo apt install -y unzip wget aria2
+        chmod +x go-ul
+        sudo cp go-ul /usr/local/bin/go-ul
+        sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
+    - name: Downloading TS
+      timeout-minutes: 360
+      run: sudo aria2c -d DL --seed-time=0 "${{github.event.inputs.magnet}}"
+    - name: Uploading Video
+      env:
+        VOE_FTP: ${{ secrets.VOE_FTP }}
+        SL_FTP: ${{ secrets.SL_FTP }}
+      run: |
+        go-ul pixeldrain gofile anonfiles ftp -d "DL/" -r -u "${{ env.VOE_FTP }}/T/$(date +'[%Y-%m-%d]')" -o output/link.txt
+        go-ul ftp -d 'DL/' -r -u "${{ env.SL_FTP }}/T/$(date +'[%Y-%m-%d]')" -O
+    - name: Upload Downloaded Videos
+      uses: actions/upload-artifact@v3
+      with:
+        name: link
+        path: output/*.txt

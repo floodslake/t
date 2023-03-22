@@ -1,0 +1,29 @@
+name: DL
+on: 
+  workflow_dispatch:
+    inputs:
+      url:
+        required: true
+        description: url    
+jobs:
+  ytdlp:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with: 
+        python-version: '3.8'
+    - name: Install Requirements
+      run : pip3 install requests
+    - name: download
+      timeout-minutes: 240
+#       run: python3 gofile-dl -h #${{github.event.inputs.url}}
+      run: |
+        sudo python gofile-dl ${{github.event.inputs.url}}
+        mv *.mp4 output/
+    - name: Uploading to FTP
+      timeout-minutes: 240
+      env :
+        VOE_FTP: ${{ secrets.VOE_FTP }}
+      run : go-ul ftp -d 'output/' -r -u '${{ env.VOE_FTP }}/TEMP' -O

@@ -1,0 +1,79 @@
+name: 08-DL-TC
+on: 
+  workflow_dispatch:
+    inputs:
+      filename:
+        required: true
+        description: Filename
+      m3u8url:
+        required: true
+        description: twitcast URL
+      audioonly:
+        type: boolean
+        description: Audio-only
+        default: true
+      videoonly:
+        type: boolean
+        description: Vudio-only
+        default: false
+jobs:
+  twitcast:
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{github.event.inputs.filename}}
+      url: ${{github.event.inputs.m3u8url}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.8"
+    - name: Installing
+      run : |
+        sudo apt update
+        sudo apt install -y wget
+        sudo wget -q 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz'
+        sudo pip install streamlink
+        sudo tar xvf ffmpeg-master-latest-linux64-gpl.tar.xz
+        sudo chmod +x ffmpeg-master-latest-linux64-gpl/bin/ffmpeg ffmpeg-master-latest-linux64-gpl/bin/ffprobe
+        sudo mv ffmpeg-master-latest-linux64-gpl/bin/ffmpeg ffmpeg-master-latest-linux64-gpl/bin/ffprobe /usr/local/bin/
+        sudo rm -rf ffmpeg-master-latest-linux64-gpl ffmpeg-master-latest-linux64-gpl.tar.xz
+        sudo chmod +x go-ul
+        sudo mv go-ul /usr/local/bin/go-ul
+        sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
+        echo $(date +'[%Y-%m-%d]') ${{github.event.inputs.filename}} ${{github.event.inputs.m3u8url}} > 'output/link.txt'
+    - name: Downloading
+      timeout-minutes: 360
+      env:
+        FILE_NAME: ${{github.event.inputs.filename}}
+        M3U8_URL: ${{github.event.inputs.m3u8url}}
+        AUDIO_ONLY: ${{github.event.inputs.audioonly}}
+        VIDEO_ONLY: ${{github.event.inputs.videoonly}}
+        TC_COOKIES: ${{ secrets.TC_COOKIES }}
+      run: python tclivedl.py
+    - name: Uploading
+      timeout-minutes: 240
+      env:
+        VOE_FTP: ${{ secrets.VOE_FTP }}
+        SL_FTP: ${{ secrets.SL_FTP }}
+        FTP_1F: ${{ secrets.FTP_1F }}
+      run: |
+        go-ul catbox ftp gofile anonfiles pixeldrain -d 'UL/' -r -u '${{ env.FTP_1F }}' -O -o 'output/link.txt'
+        mv 'output/link.txt' 'output/${{github.event.inputs.filename}}.txt'
+        go-ul ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/twitcast' -O
+        mv *.ts DL/
+        go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/twitcast' -O
+        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
+     #  url --upload-file "UL/*.mp4" "https://transfer.sh/${{github.event.inputs.filename}}.mp4" >> 'output/${{github.event.inputs.filename}}.txt'
+     #  go-ul pixeldrain gofile anonfiles catbox ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/twitcast' -o 'output/link.txt'
+    - name: Send file to discord
+      uses: sinshutu/upload-to-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_TC }}
+      with:
+        args: output/*.txt
+    - name: Upload ${{github.event.inputs.filename}}s links
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{github.event.inputs.filename}}
+        path: output/*.txt

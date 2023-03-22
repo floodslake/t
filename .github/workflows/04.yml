@@ -1,0 +1,56 @@
+name: 04-DL-S
+on: 
+  workflow_dispatch:
+    inputs:
+      filename:
+        required: true
+        description: Filename
+      url:
+        required: true
+        description: url m3u8
+      includeVideo:
+        type: boolean
+        description: UL Video
+        default: false
+jobs:
+  streamlink:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with: 
+        python-version: '3.8'
+    - name: Install Requirements
+    
+    # sudo python3 -m pip install --upgrade pip
+   # sudo apt install -y unzip wget ffmpeg mkvtoolnix
+      run : |
+        sudo apt update
+        sudo apt install -y wget ffmpeg
+        sudo pip install requests streamlink
+        sudo mkdir DL
+        sudo mkdir UL
+    - name: Downloading TS
+      timeout-minutes: 360
+      run: sudo streamlink --stream-segment-threads 8 -o 'DL/${{github.event.inputs.filename}}.ts' '${{github.event.inputs.url}}' best
+    - name: Post-processing Video
+      if: ${{github.event.inputs.includeVideo == 'true'}}
+      run: sudo ffmpeg -hide_banner -i 'DL/${{github.event.inputs.filename}}.ts' -c copy -map_metadata -1 -movflags +faststart 'UL/${{github.event.inputs.filename}}.mp4'
+    - name: Post-processing Audio
+      run: sudo ffmpeg -hide_banner -i 'DL/${{github.event.inputs.filename}}.ts' -vn -c:a copy -map_metadata -1 -movflags +faststart 'UL/${{github.event.inputs.filename}}.m4a'
+    - name: Uploading Video
+      timeout-minutes: 240
+      run: sudo go-ul pixeldrain gofile anonfiles -d 'UL/' -r -o 'output/${{github.event.inputs.filename}}.txt'
+    - name: tf.hs A
+      timeout-minutes: 240
+      run: curl --upload-file "UL/${{github.event.inputs.filename}}.m4a" "https://transfer.sh/${{github.event.inputs.filename}}.m4a" >> 'output/${{github.event.inputs.filename}}.txt'
+    - name: tf.hs V
+      if: ${{github.event.inputs.includeVideo == 'true'}}
+      timeout-minutes: 240
+      run: curl --upload-file "UL/${{github.event.inputs.filename}}.mp4" "https://transfer.sh/${{github.event.inputs.filename}}.mp4" >> 'output/${{github.event.inputs.filename}}.txt'
+    - name: Upload Downloaded Videos
+      uses: actions/upload-artifact@v3
+      with:
+        name: link
+        path: output
