@@ -36,6 +36,7 @@ jobs:
         VIDEO_ONLY: false
         USE_FFMEG: false
         REFERER: ${{ secrets.URL_TC_PD }}
+        TC: true
       run: python SFFDL.py
     - name: Uploading
       env:
