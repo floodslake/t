@@ -7,6 +7,7 @@ video_only = os.getenv("VIDEO_ONLY")
 audio_only = os.getenv("AUDIO_ONLY")
 use_ffmpeg = os.getenv("USE_FFMPEG")
 referer = os.getenv("REFERER")
+tc = os.getenv("TC")
 
 output = "%s [%s]" % (file_name, unix2base62.timename())
 # metadata = '-metadata:g encoding_tool="GA.00.00"'
@@ -16,7 +17,7 @@ s_referer = '--http-header "Referer=%s"' % (referer)
 if use_ffmpeg == 'true':
   download_command = 'ffmpeg -hide_banner -i "%s" -c copy "DL/%s.ts"' % (m3u8_url, output)
 else:
-  if audio_only == 'true' and video_only == 'false':
+  if tc == 'true':
     download_command = 'streamlink --twitch-disable-hosting --twitch-disable-ads --twitch-disable-reruns --hls-live-restart --retry-streams 30 --stream-segment-threads 8 --force-progress %s %s -o "DL/%s.ts" "%s" audio_only,worst' % (http_header, s_referer, output, m3u8_url)
   else:
     download_command = 'streamlink --hls-live-restart --retry-open 30 --retry-streams 30 --retry-max 300 --stream-segment-threads 8 --force-progress %s %s -o "DL/%s.ts" "%s" best' % (http_header, s_referer, output, m3u8_url)
