@@ -61,6 +61,7 @@ jobs:
         VIDEO_ONLY: ${{github.event.inputs.videoonly}}
         USE_FFMEG: ${{github.event.inputs.useffmpeg}}
         REFERER: ${{github.event.inputs.referer}}
+        TC: false
       run: python SFFDL.py
     - name: Uploading
       if: ${{github.event.inputs.ftp_only == 'false'}}
