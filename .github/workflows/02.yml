@@ -14,7 +14,7 @@ on:
       audioonly:
         type: boolean
         description: Audio-only
-        default: false
+        default: true
       videoonly:
         type: boolean
         description: Video-only
