@@ -20,7 +20,7 @@ jobs:
     - name: Installing
       run : |
         sudo apt update -y
-        sudo pip install --user -U streamlink
+        sudo pip install streamlink
         sudo chmod a+rx go-ul
         sudo cp go-ul /usr/local/bin/go-ul
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
