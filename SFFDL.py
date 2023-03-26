@@ -20,7 +20,7 @@ else:
   if tc == 'true':
     download_command = 'streamlink --twitch-disable-hosting --twitch-disable-ads --twitch-disable-reruns --hls-live-restart --retry-streams 30 --stream-segment-threads 8 --force-progress %s %s -o "DL/%s.ts" "%s" audio_only,worst' % (http_header, s_referer, output, m3u8_url)
   else:
-    download_command = 'streamlink --hls-live-restart --retry-open 30 --retry-streams 30 --retry-max 300 --stream-segment-threads 8 --force-progress %s %s -o "DL/%s.ts" "%s" best' % (http_header, s_referer, output, m3u8_url)
+    download_command = 'streamlink --hls-live-restart --retry-open 30 --retry-streams 30 --retry-max 300 --stream-segment-threads 8 --force-progress %s %s -o "DL/%s.ts" "%s" 360p,best' % (http_header, s_referer, output, m3u8_url)
 os.system(download_command)
 
 if audio_only == 'true' and video_only == 'true':
