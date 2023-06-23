@@ -15,11 +15,13 @@ jobs:
       with: 
         python-version: '3.8'
     - name: Install Requirements
-      run : pip install requests
+      run: |
+        pip install requests
+        sudo apt install aria2
     - name: download
-      timeout-minutes: 240
+      timeout-minutes: 60
       run: |
         cd DL && python ../gofile-dl "${{github.event.inputs.url}}"
     - name: Uploading to FTP
-      timeout-minutes: 240
+      timeout-minutes: 60
       run : go-ul pixeldrain catbox -d 'DL/' -r
