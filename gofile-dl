@@ -54,7 +54,22 @@ def api_get(session, url):
         trace.update({'res': res.text})
         raise e
 
-_websiteToken = "12345"
+def extract_website_token():
+    import requests
+    url = "https://gofile.io/dist/js/alljs.js"
+    response = requests.get(url)
+    if response.status_code == 200:
+        content = response.text
+        match = re.search(r'fetchData\.websiteToken = "([A-Za-z0-9]+)"', content)
+        if match:
+            website_token = match.group(1)
+            return website_token
+        else:
+            print("Token not found")
+    else:
+        print(f"Failed to fetch URL content with status code {response.status_code}")
+
+_websiteToken = extract_website_token()
 def get_with_website_token(session, url, fail=False):
     global _websiteToken
 
