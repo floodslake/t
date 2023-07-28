@@ -32,7 +32,7 @@ jobs:
       run : |
         sudo apt update
         sudo apt install -y wget
-        sudo pip install streamlink
+        sudo pip install -v "streamlink<6.0.0"
         sudo wget -q 'https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz'
         sudo tar xvf ffmpeg-release-amd64-static.tar.xz ffmpeg-6.0-amd64-static/ffmpeg ffmpeg-6.0-amd64-static/ffprobe
         sudo chmod a+rx ffmpeg-6.0-amd64-static/ffmpeg ffmpeg-6.0-amd64-static/ffprobe
