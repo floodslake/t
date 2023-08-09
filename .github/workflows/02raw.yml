@@ -52,7 +52,7 @@ jobs:
         SL_FTP: ${{ secrets.SL_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
-        go-ul catbox gofile -d 'DL/' -r -o 'output/link.txt'
+        go-ul catbox gofile anonfiles -d 'DL/' -r -o 'output/link.txt'
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
       # go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
     - name: Send file to discord
