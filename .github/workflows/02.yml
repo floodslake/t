@@ -70,7 +70,7 @@ jobs:
         SL_FTP: ${{ secrets.SL_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
-        go-ul pixeldrain catbox ftp gofile anonfiles -d 'UL/' -r -u '${{ env.VOE_FTP }}/SFF/${{github.event.inputs.filename}}' -o 'output/link.txt'
+        go-ul catbox ftp gofile -d 'UL/' -r -u '${{ env.VOE_FTP }}/SFF/${{github.event.inputs.filename}}' -o 'output/link.txt'
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]'))_${{github.event.inputs.filename}}.txt"
         go-ul ftp -d 'UL/' -r -u '${{ env.SL_FTP }}/SFF' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -O
@@ -79,10 +79,8 @@ jobs:
       if: ${{github.event.inputs.ftp_only == 'true'}}
       env:
         VOE_FTP: ${{ secrets.VOE_FTP }}
-        SL_FTP: ${{ secrets.SL_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
-        go-ul ftp -d 'UL/' -r -u '${{ env.SL_FTP }}/SFF' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/SFF/${{github.event.inputs.filename}}' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -O
       # go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/SFFraw' -O
