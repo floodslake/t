@@ -58,7 +58,9 @@ jobs:
         FTP_1F: ${{ secrets.FTP_1F }}
         UC_FTP: ${{ secrets.UC_FTP }}
       run: |
-        go-ul catbox ftp gofile -d 'UL/' -r -u '${{ env.FTP_1F }}' -O -o 'output/link.txt'
+        go-ul gofile -d 'UL/' -r -o 'output/link.txt'
+        go-ul ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -O -o 'output/link.txt'
+        go-ul catbox -d 'UL/' -r -o 'output/link.txt'
         mv 'output/link.txt' 'output/${{github.event.inputs.filename}}.txt'
         go-ul ftp -d 'UL/' -r -u '${{ env.UC_FTP }}/twitcast' -O
         go-ul ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/twitcast' -O
