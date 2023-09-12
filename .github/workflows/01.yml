@@ -21,7 +21,6 @@ jobs:
 #       run: python3 gofile-dl -h #${{github.event.inputs.url}}
       run: |
         cd output && sudo python "../gofile-dl" ${{github.event.inputs.url}}
-        mv *.mp4 output/
     - name: Uploading to FTP
       timeout-minutes: 240
       env :
