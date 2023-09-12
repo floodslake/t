@@ -15,6 +15,10 @@ on:
         type: boolean
         description: use FFMPEG
         default: false
+      upload_to_ftp:
+        type: boolean
+        required: false
+        description: Upload to FTP
 jobs:
   SFF-M3U8:
     runs-on: ubuntu-latest
@@ -61,3 +65,10 @@ jobs:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_RAW }}
       with:
         args: output/*.txt
+    - name: Uploading to FTP
+      if: ${{github.event.inputs.upload_to_ftp == 'false'}}
+      env:
+        VOE_FTP: ${{ secrets.VOE_FTP }}
+        SL_FTP: ${{ secrets.SL_FTP }}
+        FTP_1F: ${{ secrets.FTP_1F }}
+      run: go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
