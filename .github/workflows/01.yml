@@ -19,6 +19,7 @@ jobs:
         pip3 install requests
         sudo chmod a+rx go-ul
         sudo cp go-ul /usr/local/bin/go-ul
+        sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
     - name: download
       timeout-minutes: 240
 #       run: python3 gofile-dl -h #${{github.event.inputs.url}}
