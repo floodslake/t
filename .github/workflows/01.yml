@@ -20,10 +20,13 @@ jobs:
       timeout-minutes: 240
 #       run: python3 gofile-dl -h #${{github.event.inputs.url}}
       run: |
-        sudo python gofile-dl ${{github.event.inputs.url}}
+        cd output && sudo python "../gofile-dl" ${{github.event.inputs.url}}
         mv *.mp4 output/
     - name: Uploading to FTP
       timeout-minutes: 240
       env :
         VOE_FTP: ${{ secrets.VOE_FTP }}
-      run : go-ul ftp -d 'output/' -r -u '${{ env.VOE_FTP }}/TEMP' -O
+        FTP_1F: ${{ secrets.FTP_1F}}
+      run : |
+        go-ul ftp -d 'output/' -r -u '${{ env.FTP_1F }}/TEMP' -O
+        go-ul ftp -d 'output/' -r -u '${{ env.VOE_FTP }}/TEMP' -O
