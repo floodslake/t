@@ -33,6 +33,7 @@ jobs:
         sudo chmod a+rx ffmpeg-master-latest-linux64-gpl/bin/ffmpeg ffmpeg-master-latest-linux64-gpl/bin/ffprobe
         sudo mv ffmpeg-master-latest-linux64-gpl/bin/ffmpeg ffmpeg-master-latest-linux64-gpl/bin/ffprobe /usr/local/bin/
         sudo rm -rf ffmpeg-master-latest-linux64-gpl ffmpeg-master-latest-linux64-gpl.tar.xz
+        pip install -U git+https://github.com/fireattack/gfile.git
         sudo chmod a+rx go-ul
         sudo cp go-ul /usr/local/bin/go-ul
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
@@ -52,9 +53,9 @@ jobs:
         SL_FTP: ${{ secrets.SL_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
-        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
-        go-ul gofile catbox -d 'DL/' -r -o 'output/link.txt'
+        python gfile-ul.py "DL" >> "output/link.txt"
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
+      # go-ul gofile catbox -d 'DL/' -r -o 'output/link.txt'
     - name: Send file to discord
       uses: sinshutu/upload-to-discord@master
       env:
