@@ -11,7 +11,7 @@ tc = os.getenv("TC")
 
 output = "%s [%s]" % (file_name, unix2base62.timename())
 # metadata = '-metadata:g encoding_tool="GA.00.00"'
-http_header = '--http-header "User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0"'
+http_header = '--http-header "User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"'
 s_referer = '--http-header "Referer=%s"' % (referer)
 
 if use_ffmpeg == 'true':
