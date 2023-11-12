@@ -33,11 +33,9 @@ jobs:
         sudo apt update
         sudo apt install -y wget
         sudo pip install -v "streamlink<6.0.0"
-        sudo wget -q 'https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz'
-        sudo tar xvf ffmpeg-release-amd64-static.tar.xz ffmpeg-6.0-amd64-static/ffmpeg ffmpeg-6.0-amd64-static/ffprobe
-        sudo chmod a+rx ffmpeg-6.0-amd64-static/ffmpeg ffmpeg-6.0-amd64-static/ffprobe
-        sudo mv ffmpeg-6.0-amd64-static/ffmpeg ffmpeg-6.0-amd64-static/ffprobe /usr/local/bin/
-        sudo rm -rf ffmpeg-6.0-amd64-static ffmpeg-release-amd64-static.tar.xz
+        sudo wget -q 'https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z'
+        sudo 7z x ffmpeg-linux.7z -o/usr/local/bin/ && rm ffmpeg-linux.7z
+        sudo chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/ffplay
         sudo chmod +x go-ul
         sudo mv go-ul /usr/local/bin/go-ul
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
