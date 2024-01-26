@@ -54,33 +54,18 @@ def api_get(session, url):
         trace.update({'res': res.text})
         raise e
 
-def extract_website_token():
-    import requests
-    url = "https://gofile.io/dist/js/alljs.js"
-    response = requests.get(url)
-    if response.status_code == 200:
-        content = response.text
-        match = re.search(r'fetchData\.websiteToken = "([A-Za-z0-9]+)"', content)
-        if match:
-            website_token = match.group(1)
-            return website_token
-        else:
-            print("Token not found")
-    else:
-        print(f"Failed to fetch URL content with status code {response.status_code}")
-
-_websiteToken = extract_website_token()
+_websiteToken = "4fd6sg89d7s6"
 def get_with_website_token(session, url, fail=False):
     global _websiteToken
 
-    data = api_get(session, url + "&websiteToken=" + _websiteToken)
+    data = api_get(session, url + "&wt=" + _websiteToken)
     if data["status"] == "error-notPremium":
         if fail:
             raise Exception(f"Extracted website token '{_websiteToken}' not accepted by gofile")
         print("Fetching new websiteToken")
-        trace, res = _get_trace(session, "https://gofile.io/contents/files.html", False)
+        trace, res = _get_trace(session, "https://gofile.io/dist/js/alljs.js", False)
         html = res.text
-        match = re.search('websiteToken"?\s*:\s*"(.+)"', html)
+        match = re.search(r'fetchData\.wt = "([A-Za-z0-9]+)"', html)
         if not match:
             trace.update({'res': html})
             raise Exception("Unable to extract new websiteToken")
