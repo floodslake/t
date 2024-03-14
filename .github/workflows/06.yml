@@ -23,7 +23,7 @@ jobs:
     - name: Installing
       run : |
         sudo apt update
-        sudo wget -q 'https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z'
+        sudo wget -q 'https://github.com/floodslake/ffmpegrepack/releases/latest/download/ffmpeg-linux.7z'
         sudo 7z x ffmpeg-linux.7z -o/usr/local/bin/ && rm ffmpeg-linux.7z
         sudo chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/ffplay
         sudo chmod +x ytarchive
