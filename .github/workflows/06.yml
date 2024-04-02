@@ -53,7 +53,7 @@ jobs:
         go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/YT' -O
         go-ul catbox ftp gofile -d 'DL/' -r -u '${{ env.FTP_1F }}' -O -o output/link.txt
         mv output/link.txt "output/$(date +'[%Y-%m-%d]')_${{github.event.inputs.name}}_$(echo '${{github.event.inputs.url}}' | tail -c 12).txt"
-        go-ul ftp -d 'DL/' -r -u '${{ env.UC_FTP }}/YouTube/${{github.event.inputs.name}}' -O
+      # go-ul ftp -d 'DL/' -r -u '${{ env.UC_FTP }}/YouTube/${{github.event.inputs.name}}' -O
     - name: Upload link ${{github.event.inputs.name}}s Videos
       uses: actions/upload-artifact@v3
       with:
