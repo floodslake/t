@@ -30,7 +30,6 @@ jobs:
         python-version: "3.10"
     - name: Installing
       run : |
-        sudo apt update
         sudo apt install -y wget
         sudo pip install -v "streamlink<6.0.0"
         sudo wget -q 'https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z'
