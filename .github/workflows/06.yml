@@ -19,7 +19,7 @@ jobs:
       name: ${{github.event.inputs.name}}
       url: ${{github.event.inputs.url}}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Installing
       run : |
         sudo wget -q 'https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z'
@@ -54,7 +54,7 @@ jobs:
         mv output/link.txt "output/$(date +'[%Y-%m-%d]')_${{github.event.inputs.name}}_$(echo '${{github.event.inputs.url}}' | tail -c 12).txt"
       # go-ul ftp -d 'DL/' -r -u '${{ env.UC_FTP }}/YouTube/${{github.event.inputs.name}}' -O
     - name: Upload link ${{github.event.inputs.name}}s Videos
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{github.event.inputs.name}}
         path: output/*.txt
