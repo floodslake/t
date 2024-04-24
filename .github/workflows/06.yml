@@ -19,7 +19,7 @@ jobs:
       name: ${{github.event.inputs.name}}
       url: ${{github.event.inputs.url}}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Installing
       run : |
         sudo wget -q 'https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z'
