@@ -53,7 +53,7 @@ jobs:
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
         go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
-        go-ul gofile catbox -d 'DL/' -r -o 'output/link.txt'
+        go-ul catbox -d 'DL/' -r -o 'output/link.txt'
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
     - name: Send file to discord
       uses: sinshutu/upload-to-discord@master
