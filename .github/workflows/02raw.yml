@@ -33,7 +33,7 @@ jobs:
         sudo chmod a+rx go-ul
         sudo cp go-ul /usr/local/bin/go-ul
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
-        echo $(date +'[%Y-%m-%d]') ${{github.event.inputs.filename}} > 'output/link.txt'
+        echo $(date +'[%Y-%m-%d]') ${{github.event.inputs.filename}} ${{github.event.inputs.m3u8url}} > 'output/link.txt'
     - name: Downloading
       env:
         FILE_NAME: ${{github.event.inputs.filename}}
@@ -50,6 +50,7 @@ jobs:
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
         go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
+        getServer.py
         go-ul gofile catbox -d 'DL/' -r -o 'output/link.txt'
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
     - name: Send file to discord
