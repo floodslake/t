@@ -9,7 +9,7 @@ while True:
             
             try:
                 server = getServer['data']['servers'][0]['name']
-            except KeyError:a
+            except KeyError:
                 server = getServer['data']['server']
                 
             if server!="store10":
