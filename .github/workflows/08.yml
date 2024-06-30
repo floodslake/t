@@ -55,6 +55,8 @@ jobs:
         FTP_1F: ${{ secrets.FTP_1F }}
         UC_FTP: ${{ secrets.UC_FTP }}
       run: |
+        pip install requests
+        python getServer.py
         go-ul gofile -d 'UL/' -r -o 'output/link.txt'
         go-ul ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -O -o 'output/link.txt'
         go-ul catbox -d 'UL/' -r -o 'output/link.txt'
