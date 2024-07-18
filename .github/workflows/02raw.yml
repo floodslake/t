@@ -60,3 +60,8 @@ jobs:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_RAW }}
       with:
         args: output/*.txt
+    - name: PD DL uploader
+      env:
+        PD_TOKEN: ${{ secrets.PD_TOKEN }}
+        FOLDER: DL
+      run: python pd_uploader.py
