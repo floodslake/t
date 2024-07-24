@@ -37,14 +37,6 @@ jobs:
     - name: Downloading Audio-only
       if: ${{github.event.inputs.audioOnly == 'true'}}
       run: ytarchive -v -w -t -o "DL/[%(upload_date)s] %(id)s (%(channel)s)" --add-metadata --threads 8 "${{github.event.inputs.url}}" audio_only
-    - name: Gofile DL uploader
-      env:
-        GO_TOKEN: ${{ secrets.GO_TOKEN }}
-        GO_FOLDER: ${{ secrets.GO_FOLDER }}
-        FOLDER: "DL"
-      run: |
-       pip install requests
-       python 5file-ul.py
     - name: Uploading ftp
       if: ${{github.event.inputs.audioOnly == 'false'}}
       env:
@@ -56,9 +48,13 @@ jobs:
         VOE_FTP: ${{ secrets.VOE_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
         UC_FTP: ${{ secrets.UC_FTP }}
+        GO_TOKEN: ${{ secrets.GO_TOKEN }}
+        GO_FOLDER: ${{ secrets.GO_FOLDER }}
+        FOLDER: "DL"
       run: |
-        go-ul ftp -d 'DL/' -r -u '${{ env.SL_FTP }}/YT' -O
-        go-ul catbox ftp gofile -d 'DL/' -r -u '${{ env.FTP_1F }}' -O -o output/link.txt
+        go-ul catbox ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O -o output/link.txt
+        pip install requests
+        python 5file-ul.py
         mv output/link.txt "output/$(date +'[%Y-%m-%d]')_${{github.event.inputs.name}}_$(echo '${{github.event.inputs.url}}' | tail -c 12).txt"
       # go-ul ftp -d 'DL/' -r -u '${{ env.UC_FTP }}/YouTube/${{github.event.inputs.name}}' -O
     - name: Upload link ${{github.event.inputs.name}}s Videos
