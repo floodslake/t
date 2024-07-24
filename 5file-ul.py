@@ -57,7 +57,7 @@ def getServer():
         break
       else:
         time.sleep(2)
-   else:
+    else:
      time.sleep(2)
   print(server)
   return server
