@@ -68,7 +68,7 @@ code = folderData['code']
 server = getServer()
 
 for file in sorted(os.listdir(folder)):
-  ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{pathFile}" https://{server}.gofile.io/uploadFile'
+  ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://{server}.gofile.io/uploadFile'
   print(f"https://gofile.io/d/{code}")
   os.system(ul_command)
   print_cmd = f'echo https://gofile.io/d/{code} >> "{text_link}"'
