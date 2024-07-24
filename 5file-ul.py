@@ -4,6 +4,7 @@ import time
 import os
 
 folder = os.getenv("FOLDER")
+text_link = os.getenv("TEXTLINK")
 userToken = os.getenv("GO_TOKEN")
 parentFolderId = os.getenv("GO_FOLDER")
 
