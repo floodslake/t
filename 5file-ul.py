@@ -72,5 +72,5 @@ for file in sorted(os.listdir(folder)):
   ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://{server}.gofile.io/uploadFile'
   print(f"https://gofile.io/d/{code}")
   os.system(ul_command)
-  print_cmd = f'echo https://gofile.io/d/{code} >> "{text_link}"'
+  print_cmd = f'echo https://gofile.io/d/{code} >> "output/{text_link}.txt"'
   os.system(print_cmd)
