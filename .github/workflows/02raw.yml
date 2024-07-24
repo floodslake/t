@@ -48,7 +48,9 @@ jobs:
         GO_TOKEN: ${{ secrets.GO_TOKEN }}
         GO_FOLDER: ${{ secrets.GO_FOLDER }}
         FOLDER: "DL"
-      run: python 5file-ul.py
+      run: |
+       pip install requests
+       python 5file-ul.py
     - name: Uploading
       env:
         VOE_FTP: ${{ secrets.VOE_FTP }}
@@ -56,8 +58,6 @@ jobs:
         FTP_1F: ${{ secrets.FTP_1F }}
       run: |
         go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
-        pip install requests
-        python getServer.py
         go-ul gofile catbox -d 'DL/' -r -o 'output/link.txt'
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
     - name: Send file to discord
