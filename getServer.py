@@ -3,7 +3,7 @@ import time
 
 while True:
     try:
-        getServer = requests.get("https://api.gofile.io/getServer").json()
+        getServer = requests.get("https://api.gofile.io/servers").json()
         
         if getServer['status']=="ok":
             
