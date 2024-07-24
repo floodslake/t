@@ -43,22 +43,18 @@ jobs:
         USE_FFMEG: ${{github.event.inputs.useffmpeg}}
         REFERER: ${{github.event.inputs.referer}}
       run: python SFFraw.py
-    - name: Gofile DL uploader
+    - name: Uploading
       env:
+        VOE_FTP: ${{ secrets.VOE_FTP }}
+        FTP_1F: ${{ secrets.FTP_1F }}
         GO_TOKEN: ${{ secrets.GO_TOKEN }}
         GO_FOLDER: ${{ secrets.GO_FOLDER }}
         FOLDER: "DL"
       run: |
-       pip install requests
-       python 5file-ul.py
-    - name: Uploading
-      env:
-        VOE_FTP: ${{ secrets.VOE_FTP }}
-        SL_FTP: ${{ secrets.SL_FTP }}
-        FTP_1F: ${{ secrets.FTP_1F }}
-      run: |
         go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
-        go-ul gofile catbox -d 'DL/' -r -o 'output/link.txt'
+        pip install requests
+        python 5file-ul.py
+        go-ul catbox -d 'DL/' -r -o 'output/link.txt'
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
     - name: Send file to discord
       uses: sinshutu/upload-to-discord@master
