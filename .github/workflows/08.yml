@@ -78,3 +78,8 @@ jobs:
       with:
         name: ${{github.event.inputs.filename}}
         path: output/*.txt
+    - name: PD UL uploader
+      env:
+        PD_TOKEN: ${{ secrets.PD_TOKEN }}
+        FOLDER: "UL"
+      run: python pd_uploader.py
