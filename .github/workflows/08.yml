@@ -48,6 +48,14 @@ jobs:
         VIDEO_ONLY: ${{github.event.inputs.videoonly}}
         TC_COOKIES: ${{ secrets.TC_COOKIES }}
       run: python tclivedl.py
+    - name: Gofile DL uploader
+      env:
+        GO_TOKEN: ${{ secrets.GO_TOKEN }}
+        GO_FOLDER: ${{ secrets.GO_FOLDER }}
+        FOLDER: "UL"
+      run: |
+       pip install requests
+       python 5file-ul.py
     - name: Uploading
       timeout-minutes: 240
       env:
