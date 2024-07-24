@@ -48,7 +48,6 @@ jobs:
         GO_TOKEN: ${{ secrets.GO_TOKEN }}
         GO_FOLDER: ${{ secrets.GO_FOLDER }}
         FOLDER: "DL"
-        TEXTLINK: ${{ github.event.inputs.filename }}
       run: |
        pip install requests
        python 5file-ul.py
