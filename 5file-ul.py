@@ -4,7 +4,6 @@ import time
 import os
 
 folder = os.getenv("FOLDER")
-text_link = os.getenv("TEXTLINK")
 userToken = os.getenv("GO_TOKEN")
 parentFolderId = os.getenv("GO_FOLDER")
 
@@ -72,5 +71,5 @@ for file in sorted(os.listdir(folder)):
   ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://{server}.gofile.io/uploadFile'
   print(f"https://gofile.io/d/{code}")
   os.system(ul_command)
-  print_cmd = f'echo https://gofile.io/d/{code} >> "output/{text_link}.txt"'
+  print_cmd = f'echo https://gofile.io/d/{code} >> "output/link.txt"'
   os.system(print_cmd)
