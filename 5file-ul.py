@@ -63,7 +63,7 @@ def getServer():
   return server
   
 folderData = createFolder(userToken,parentFolderId)
-folderId = folderData['folderId']
+folderId = folderData['id']
 code = folderData['code']
 server = getServer()
 
