@@ -25,7 +25,7 @@ def createFolder(userToken,parentFolderId):
   while True:
     createFolder = requests.post('https://api.gofile.io/contents/createFolder', headers=headers, json=json_data).json()
     if createFolder['status']=="ok":
-      folderId = createFolder['data']['folderId']
+      folderId = createFolder['data']['id']
       code = createFolder['data']['code']
       print(f"New Folder {code}:{folderId} is created")
       break
