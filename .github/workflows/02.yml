@@ -61,6 +61,14 @@ jobs:
         REFERER: ${{github.event.inputs.referer}}
         TC: false
       run: python SFFDL.py
+    - name: Gofile DL uploader
+      env:
+        GO_TOKEN: ${{ secrets.GO_TOKEN }}
+        GO_FOLDER: ${{ secrets.GO_FOLDER }}
+        FOLDER: "DL"
+      run: |
+       pip install requests
+       python 5file-ul.py
     - name: Uploading
       if: ${{github.event.inputs.ftp_only == 'false'}}
       env:

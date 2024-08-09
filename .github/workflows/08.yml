@@ -54,12 +54,14 @@ jobs:
         VOE_FTP: ${{ secrets.VOE_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
         UC_FTP: ${{ secrets.UC_FTP }}
+        GO_TOKEN: ${{ secrets.GO_TOKEN }}
+        GO_FOLDER: ${{ secrets.GO_FOLDER }}
+        FOLDER: "UL"
       run: |
-        pip install requests
-        python getServer.py
-        go-ul gofile -d 'UL/' -r -o 'output/link.txt'
         go-ul ftp -d 'UL/' -r -u '${{ env.FTP_1F }}' -O -o 'output/link.txt'
         go-ul catbox -d 'UL/' -r -o 'output/link.txt'
+        pip install requests
+        python 5file-ul.py
         mv 'output/link.txt' 'output/${{github.event.inputs.filename}}.txt'
         go-ul ftp -d 'UL/' -r -u '${{ env.VOE_FTP }}/twitcast' -O
         mv *.ts DL/
