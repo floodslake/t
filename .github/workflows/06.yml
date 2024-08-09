@@ -12,6 +12,9 @@ on:
         type: boolean
         description: DL Audio-only
         default: true
+      proxy:
+        required: true
+        description: proxy
 jobs:
   ytarchive:
     runs-on: ubuntu-latest
@@ -33,10 +36,10 @@ jobs:
         echo $(date +'[%Y-%m-%d]') ${{github.event.inputs.name}} ${{github.event.inputs.url}} > output/link.txt
     - name: Downloading ${{github.event.inputs.name}} ${{github.event.inputs.url}}
       if: ${{github.event.inputs.audioOnly == 'false'}}
-      run: ytarchive -v -w -t -o "DL/[%(upload_date)s] %(id)s (%(channel)s)" --add-metadata --separate-audio --threads 8 "${{github.event.inputs.url}}" best
+      run: ytarchive --proxy ${{github.event.inputs.proxy}} -v -w -t -o "DL/[%(upload_date)s] %(id)s (%(channel)s)" --add-metadata --separate-audio --threads 8 "${{github.event.inputs.url}}" best
     - name: Downloading Audio-only
       if: ${{github.event.inputs.audioOnly == 'true'}}
-      run: ytarchive -v -w -t -o "DL/[%(upload_date)s] %(id)s (%(channel)s)" --add-metadata --threads 8 "${{github.event.inputs.url}}" audio_only
+      run: ytarchive --proxy ${{github.event.inputs.proxy}} -v -w -t -o "DL/[%(upload_date)s] %(id)s (%(channel)s)" --add-metadata --threads 8 "${{github.event.inputs.url}}" audio_only
     - name: Uploading ftp
       if: ${{github.event.inputs.audioOnly == 'false'}}
       env:
