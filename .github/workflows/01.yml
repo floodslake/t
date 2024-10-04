@@ -17,6 +17,7 @@ jobs:
     - name: Install Requirements
       run : |
         pip3 install requests
+        apt install jq
         sudo chmod a+rx go-ul
         sudo cp go-ul /usr/local/bin/go-ul
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
@@ -28,8 +29,8 @@ jobs:
     - name: Uploading to FTP
       timeout-minutes: 240
       env :
-        VOE_FTP: ${{ secrets.VOE_FTP }}
-        FTP_1F: ${{ secrets.FTP_1F}}
+        PD_API_CH: ${{ secrets.PD_API_CH }}
       run : |
-        go-ul ftp -d 'output/' -r -u '${{ env.FTP_1F }}/TEMP' -O
-        go-ul ftp -d 'output/' -r -u '${{ env.VOE_FTP }}/TEMP' -O
+        for file in output/*; do
+          curl -g -T "$file" -u :${{ env.PD_API_CH }} https://pixeldrain.com/api/file/ | jq -r '.id' | tee -a output.txt
+        done
