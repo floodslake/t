@@ -4,7 +4,7 @@ on:
     inputs:
       url:
         required: true
-        description: url    
+        description: gofile url  
 jobs:
   ytdlp:
     runs-on: ubuntu-latest
@@ -17,7 +17,7 @@ jobs:
     - name: Install Requirements
       run : |
         pip3 install requests
-        apt install jq
+        sudo apt install jq aria2
         sudo chmod a+rx go-ul
         sudo cp go-ul /usr/local/bin/go-ul
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
@@ -25,12 +25,17 @@ jobs:
       timeout-minutes: 240
 #       run: python3 gofile-dl -h #${{github.event.inputs.url}}
       run: |
-        cd output && sudo python "../gofile-dl" ${{github.event.inputs.url}}
-    - name: Uploading to FTP
-      timeout-minutes: 240
+        cd DL && sudo python "../gofile-dl" ${{github.event.inputs.url}}
+    - name: Uploading to PD
+      timeout-minutes: 60
       env :
         PD_API_CH: ${{ secrets.PD_API_CH }}
       run : |
-        for file in output/*; do
-          curl -g -T "$file" -u :${{ env.PD_API_CH }} https://pixeldrain.com/api/file/ | jq -r '.id' | tee -a output.txt
+        for file in DL/*; do
+          curl -g -T "$file" -u :${{ env.PD_API_CH }} https://pixeldrain.com/api/file/ | jq -r '.id' | tee -a output/link.txt
         done
+    - name: Upload links
+      uses: actions/upload-artifact@v4
+      with:
+        name: link
+        path: output/*.txt
