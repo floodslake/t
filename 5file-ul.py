@@ -47,7 +47,11 @@ def createFolder(userToken,parentFolderId):
   
 def getServer():
   while True:
-    getServer = requests.get("https://api.gofile.io/servers").json()
+    try:
+        getServer = requests.get("https://api.gofile.io/servers", timeout=60).json()
+    except requests.exceptions.Timeout:
+        server = "store5"
+        break
     if getServer['status']=="ok":
       try:
         server = getServer['data']['servers'][0]['name']
