@@ -16,10 +16,10 @@ while True:
                 print(server)
                 break
             else:
-                time.sleep(2)
+                time.sleep(15)
                 
         else:
-            time.sleep(2)
+            time.sleep(15)
             
     except requests.exceptions.RequestException as e:
         time.sleep(30)
