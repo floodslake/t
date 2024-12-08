@@ -60,9 +60,9 @@ def getServer():
       if server!="store10":
         break
       else:
-        time.sleep(2)
+        time.sleep(15)
     else:
-     time.sleep(2)
+     time.sleep(15)
   print(server)
   return server
   
