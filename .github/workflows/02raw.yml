@@ -55,6 +55,7 @@ jobs:
         pip install requests
         python 5file-ul.py
         go-ul catbox -d 'DL/' -r -o 'output/link.txt'
+        curl -g -o - -H "Authorization: Bearer ${{ secrets.BZ_API }}" -T "output/link.txt" "https://w.buzzheavier.com/${{ secrets.BZ_FOLDER }}/${{ github.event.inputs.filename }}.txt" | cat
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
     - name: Send file to discord
       uses: sinshutu/upload-to-discord@master
