@@ -42,7 +42,7 @@ jobs:
     - name: Downloading Audio-only
       if: ${{github.event.inputs.audioOnly == 'true'}}
       run: |
-         torsocks -i ytarchive --proxy socks5://127.0.0.1:9050 -4 -v -w -t -o "DL/[%(upload_date)s] %(id)s (%(channel)s)" --add-metadata --threads 8 "${{github.event.inputs.url}}" audio_only
+         torsocks -i ytarchive --proxy socks5://127.0.0.1:9050 -4 -v -w -t -o "DL/[%(upload_date)s] %(id)s (%(channel)s)" --add-metadata --threads 3 "${{github.event.inputs.url}}" audio_only
          
     - name: Uploading ftp
       if: ${{github.event.inputs.audioOnly == 'false'}}
