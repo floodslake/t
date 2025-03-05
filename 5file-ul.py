@@ -69,10 +69,10 @@ def getServer():
 folderData = createFolder(userToken,parentFolderId)
 folderId = folderData['id']
 code = folderData['code']
-server = getServer()
 
 for file in sorted(os.listdir(folder)):
-  ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://{server}.gofile.io/uploadFile'
+  server = getServer()
+  ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://{server}.gofile.io/contents/uploadFile'
   print(f"https://gofile.io/d/{code}")
   os.system(ul_command)
   print_cmd = f'echo https://gofile.io/d/{code} >> "output/link.txt"'
