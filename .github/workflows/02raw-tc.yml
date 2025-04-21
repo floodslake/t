@@ -36,6 +36,7 @@ jobs:
         M3U8_URL: ${{github.event.inputs.m3u8url}}
         AUDIO_ONLY: ${{github.event.inputs.audioonly}}
         VIDEO_ONLY: ${{github.event.inputs.videoonly}}
+        REFERER: ${{github.event.inputs.referer}}
         TC_COOKIES: ${{ secrets.TC_COOKIES }}
       run: python SFFraw-tc.py
     - name: Uploading
