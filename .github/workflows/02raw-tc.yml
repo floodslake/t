@@ -1,0 +1,65 @@
+name: 02-DL-SFF-M3U8-TC
+on: 
+  workflow_dispatch:
+    inputs:
+      filename:
+        required: true
+        description: Filename
+      m3u8url:
+        required: true
+        description: m3u8 URL
+      referer:
+        required: false
+        description: Refere
+jobs:
+  SFF-M3U8-TC:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+    - name: Installing
+      run : |
+        sudo pip install -v "streamlink<6.0.0"
+        sudo wget -q 'https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z'
+        sudo 7z x ffmpeg-linux.7z -o/usr/local/bin/ && rm ffmpeg-linux.7z
+        sudo chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/ffplay
+        sudo chmod a+rx go-ul
+        sudo cp go-ul /usr/local/bin/go-ul
+        sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
+        echo $(date +'[%Y-%m-%d]') ${{github.event.inputs.filename}} ${{github.event.inputs.m3u8url}} > 'output/link.txt'
+    - name: Downloading
+      env:
+        FILE_NAME: ${{github.event.inputs.filename}}
+        M3U8_URL: ${{github.event.inputs.m3u8url}}
+        AUDIO_ONLY: ${{github.event.inputs.audioonly}}
+        VIDEO_ONLY: ${{github.event.inputs.videoonly}}
+        REFERER: ${{github.event.inputs.referer}}
+        TC_COOKIES: ${{ secrets.TC_COOKIES }}
+      run: python SFFraw-tc.py
+    - name: Uploading
+      env:
+        VOE_FTP: ${{ secrets.VOE_FTP }}
+        FTP_1F: ${{ secrets.FTP_1F }}
+        GO_TOKEN: ${{ secrets.GO_TOKEN }}
+        GO_FOLDER: ${{ secrets.GO_FOLDER }}
+        FOLDER: "DL"
+      run: |
+        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
+        pip install requests
+        python 5file-ul.py
+        go-ul catbox -d 'DL/' -r -o 'output/link.txt'
+        mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
+    - name: Send file to discord
+      uses: sinshutu/upload-to-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_RAW }}
+      with:
+        args: output/*.txt
+    - name: PD DL uploader
+      env:
+        PD_TOKEN: ${{ secrets.PD_TOKEN }}
+        FOLDER: "DL"
+      run: python pd_uploader.py
