@@ -2,9 +2,15 @@ name: 05-DL-T
 on: 
   workflow_dispatch:
     inputs:
-      magnet:
+      url:
         required: true
-        description: Filename
+        description: URL
+      refs:
+        required: true
+        description: referer
+      ua:
+        required: true
+        description: useragent
 jobs:
   T-DL:
     runs-on: ubuntu-latest
@@ -19,16 +25,26 @@ jobs:
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
     - name: Downloading TS
       timeout-minutes: 360
-      run: sudo aria2c -d DL --seed-time=0 "${{github.event.inputs.magnet}}"
+      run: sudo aria2c -d DL --seed-time=0 --referer="${{github.event.inputs.refs}}" --user-agent="${{github.event.inputs.ua}}" "${{github.event.inputs.url}}"
     - name: Uploading Video
       env:
         VOE_FTP: ${{ secrets.VOE_FTP }}
-        SL_FTP: ${{ secrets.SL_FTP }}
+        FTP_1F: ${{ secrets.FTP_1F }}
+        GO_TOKEN: ${{ secrets.GO_TOKEN }}
+        GO_FOLDER: ${{ secrets.GO_FOLDER }}
+        FOLDER: "DL"
       run: |
-        go-ul pixeldrain gofile anonfiles ftp -d "DL/" -r -u "${{ env.VOE_FTP }}/T/$(date +'[%Y-%m-%d]')" -o output/link.txt
-        go-ul ftp -d 'DL/' -r -u "${{ env.SL_FTP }}/T/$(date +'[%Y-%m-%d]')" -O
-    - name: Upload Downloaded Videos
+        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
+        pip install requests
+        python 5file-ul.py
+        mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
+    - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: link
         path: output/*.txt
+    - name: PD DL uploader
+      env:
+        PD_TOKEN: ${{ secrets.PD_TOKEN }}
+        FOLDER: "DL"
+      run: python pd_uploader.py
