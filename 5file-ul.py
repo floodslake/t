@@ -81,5 +81,5 @@ try:
     os.system(print_cmd)
 except:
   for file in sorted(os.listdir(folder)):
-    ul_command = f'curl -F "token={userToken}" -F "folderId={TempFolderId}" -F "file=@{folder}/{file}" https://{server}.gofile.io/contents/uploadFile >> "output/link.txt"'
+    ul_command = f'curl -F "token={userToken}" -F "folderId={TempFolderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile >> "output/link.txt"'
     os.system(ul_command)
