@@ -45,6 +45,7 @@ jobs:
         FTP_1F: ${{ secrets.FTP_1F }}
         GO_TOKEN: ${{ secrets.GO_TOKEN }}
         GO_FOLDER: ${{ secrets.GO_FOLDER }}
+        GO_FOLDER_TEMP: ${{ secrets.GO_FOLDER_TEMP }}
         FOLDER: "DL"
       run: |
         go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
