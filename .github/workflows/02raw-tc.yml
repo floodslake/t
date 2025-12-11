@@ -48,7 +48,6 @@ jobs:
         GO_FOLDER_TEMP: ${{ secrets.GO_FOLDER_TEMP }}
         FOLDER: "DL"
       run: |
-        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
         pip install requests
         python 5file-ul.py
         go-ul catbox -d 'DL/' -r -o 'output/link.txt'
@@ -64,3 +63,8 @@ jobs:
         PD_TOKEN: ${{ secrets.PD_TOKEN }}
         FOLDER: "DL"
       run: python pd_uploader.py
+    - name: 1F DL uploader
+      env:
+        PD_TOKEN: ${{ secrets.PD_TOKEN }}
+        FOLDER: "DL"
+      run: go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
