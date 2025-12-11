@@ -41,7 +41,6 @@ jobs:
       run: python SFFraw-tc.py
     - name: Uploading
       env:
-        VOE_FTP: ${{ secrets.VOE_FTP }}
         FTP_1F: ${{ secrets.FTP_1F }}
         GO_TOKEN: ${{ secrets.GO_TOKEN }}
         GO_FOLDER: ${{ secrets.GO_FOLDER }}
