@@ -26,13 +26,10 @@ jobs:
         python-version: "3.10"
     - name: Installing
       run : |
-        wget -q 'https://github.com/floodslake/ffmpegrepack/releases/download/202501202022/ffmpeg-linux.7z'
         pip install -v "streamlink<6.0.0"
-        sudo 7z x ffmpeg-linux.7z -o/usr/local/bin/ && rm ffmpeg-linux.7z
-        sudo chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/ffplay
-        sudo chmod a+rx go-ul
-        sudo cp go-ul /usr/local/bin/go-ul
-        sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
+        chmod a+rx go-ul
+        cp go-ul /usr/local/bin/go-ul
+        rm output/.gitkeep DL/.gitkeep UL/.gitkeep
         echo $(date +'[%Y-%m-%d]') ${{github.event.inputs.filename}} ${{github.event.inputs.m3u8url}} > 'output/link.txt'
     - name: Downloading
       env:
