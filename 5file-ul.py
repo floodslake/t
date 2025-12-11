@@ -45,36 +45,13 @@ def createFolder(userToken,parentFolderId):
       
   return createFolder['data']
     
-  
-def getServer():
-  while True:
-    try:
-        getServer = requests.get("https://api.gofile.io/servers", timeout=60).json()
-    except requests.exceptions.Timeout:
-        server = "store5"
-        break
-    if getServer['status']=="ok":
-      try:
-        server = getServer['data']['servers'][0]['name']
-      except KeyError:
-        server = getServer['data']['server']
-      if server!="store10":
-        break
-      else:
-        time.sleep(15)
-    else:
-     time.sleep(15)
-  print(server)
-  return server
-
 try:
   folderData = createFolder(userToken,parentFolderId)
   folderId = folderData['id']
   code = folderData['code']
   
   for file in sorted(os.listdir(folder)):
-    server = getServer()
-    ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://{server}.gofile.io/contents/uploadFile'
+    ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile'
     print(f"https://gofile.io/d/{code}")
     os.system(ul_command)
     print_cmd = f'echo https://gofile.io/d/{code} >> "output/link.txt"'
