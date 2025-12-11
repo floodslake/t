@@ -65,6 +65,6 @@ jobs:
       run: python pd_uploader.py
     - name: 1F DL uploader
       env:
-        PD_TOKEN: ${{ secrets.PD_TOKEN }}
+        FTP_1F: ${{ secrets.FTP_1F }}
         FOLDER: "DL"
       run: go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
