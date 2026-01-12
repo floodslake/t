@@ -8,48 +8,38 @@ userToken = os.getenv("GO_TOKEN")
 parentFolderId = os.getenv("GO_FOLDER")
 TempFolderId = os.getenv("GO_FOLDER_TEMP")
 
-def createFolder(userToken,parentFolderId):
+def createFolder(userToken, parentFolderId):
   headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer '+ userToken,
   }
-  
   json_data = {
     'parentFolderId': parentFolderId,
+    'public': True,
   }
   
-  public_json_data = {
-    'attribute': 'public',
-    'attributeValue': 'true',
-  }
+  max_retries = 10
+  attempts = 0
+  while attempts < max_retries:
+    try:
+      response = requests.post('https://api.gofile.io/contents/createFolder', headers=headers, json=json_data)
+      response.raise_for_status()# This checks if the HTTP status is 200, 404, 500, etc.
+      result = response.json()
+      print(f"Attempt {attempts + 1}: {result.get('status')}")
+      if result.get('status') == "ok":
+        return result['data']['id'], result['data']['code']
+      print(f"API Error: {result}")# If status is not "ok", wait and try again
+    except requests.exceptions.RequestException as e:
+      print(f"Network/HTTP Error: {e}")
+    attempts += 1
+    if attempts < max_retries:
+      print("Retrying in 30 seconds...")
+      time.sleep(5)
   
-  while True:
-    createFolder = requests.post('https://api.gofile.io/contents/createFolder', headers=headers, json=json_data).json()
-    if createFolder['status']=="ok":
-      folderId = createFolder['data']['id']
-      code = createFolder['data']['code']
-      print(f"New Folder {code}:{folderId} is created")
-      break
-    else:
-      print(createFolder)
-      time.sleep(2)
-      
-  while True:
-    public_true = requests.put(f"https://api.gofile.io/contents/{folderId}/update", headers=headers, json=public_json_data).json()
-    if public_true['status']=="ok":
-      print(f"Folder {code} is public")
-      break
-    else:
-      print(public_true)
-      time.sleep(2)
-      
-  return createFolder['data']
+  return None, None # Return None or raise an error if all attempts fail
     
 try:
-  folderData = createFolder(userToken,parentFolderId)
-  folderId = folderData['id']
-  code = folderData['code']
-  
+  folderId, code = createFolder(userToken,parentFolderId)
   for file in sorted(os.listdir(folder)):
     ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile'
     print(f"https://gofile.io/d/{code}")
