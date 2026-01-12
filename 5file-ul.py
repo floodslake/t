@@ -13,14 +13,9 @@ def createFolder(userToken,parentFolderId):
     'Content-Type': 'application/json',
     'Authorization': 'Bearer '+ userToken,
   }
-  
   json_data = {
     'parentFolderId': parentFolderId,
-  }
-  
-  public_json_data = {
-    'attribute': 'public',
-    'attributeValue': 'true',
+    'public': True,
   }
   
   while True:
@@ -28,27 +23,18 @@ def createFolder(userToken,parentFolderId):
     if createFolder['status']=="ok":
       folderId = createFolder['data']['id']
       code = createFolder['data']['code']
-      print(f"New Folder {code}:{folderId} is created")
       break
     else:
       print(createFolder)
       time.sleep(2)
-      
-  while True:
-    public_true = requests.put(f"https://api.gofile.io/contents/{folderId}/update", headers=headers, json=public_json_data).json()
-    if public_true['status']=="ok":
-      print(f"Folder {code} is public")
-      break
-    else:
-      print(public_true)
-      time.sleep(2)
-      
+
   return createFolder['data']
-    
+
 try:
   folderData = createFolder(userToken,parentFolderId)
   folderId = folderData['id']
   code = folderData['code']
+  print(f"New Folder {code}:{folderId} is created")
   
   for file in sorted(os.listdir(folder)):
     ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile'
