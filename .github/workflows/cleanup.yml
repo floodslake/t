@@ -8,14 +8,11 @@ jobs:
     permissions:
       actions: write
     steps:
-      - name: Download latest gh cli
-        run: |
-          # Get the download URL for the latest linux amd64 deb
-          URL=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_amd64.deb")) | .browser_download_url')
-          curl -L $URL -o gh.deb
-          sudo dpkg -i gh.deb
-          gh --version
-          
+      - name: Check Remaining Rate Limit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api rate_limit --jq '.resources.core'
+        
       - name: Delete workflow runs
         env:
           GH_TOKEN: ${{ github.token }}
@@ -24,7 +21,7 @@ jobs:
           echo "Processing $REPO..."
           
           # Fetch up to 500 IDs, oldest first
-          RUN_IDS=$(gh run list --repo "$REPO" --order asc --limit 6 --json databaseId -q '.[].databaseId')
+          RUN_IDS=$(gh run list --repo "$REPO" --limit 8 --json databaseId,createdAt --jq 'sort_by(.createdAt) | .[].databaseId')
 
           # Check if there are any runs to delete
           if [ -z "$RUN_IDS" ]; then
@@ -40,8 +37,3 @@ jobs:
               echo "Failed to delete $ID. It might have already been deleted or the API is busy."
             fi
           done
-
-      - name: Check Remaining Rate Limit
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api rate_limit --jq '.resources.core'
