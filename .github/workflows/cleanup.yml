@@ -1,7 +1,5 @@
 name: Cleanup
 on:
-  schedule:
-    - cron: '0 0 1 * *'
   workflow_dispatch: 
 
 jobs:
@@ -18,7 +16,7 @@ jobs:
           echo "Processing $REPO..."
           
           # Fetch up to 500 IDs, oldest first
-          RUN_IDS=$(gh run list --repo "$REPO" --order asc --limit 500 --json databaseId -q '.[].databaseId')
+          RUN_IDS=$(gh run list --repo "$REPO" --order asc --limit 1 --json databaseId -q '.[].databaseId')
 
           # Check if there are any runs to delete
           if [ -z "$RUN_IDS" ]; then
