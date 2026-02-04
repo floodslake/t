@@ -8,14 +8,13 @@ jobs:
     permissions:
       actions: write
     steps:
-      - name: Install latest GitHub CLI
+      - name: Download latest gh cli
         run: |
-          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt update
-          sudo apt install gh -y
+          # Get the download URL for the latest linux amd64 deb
+          URL=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | jq -r '.assets[] | select(.name | endswith("_amd64.deb")) | .browser_download_url')
+          curl -L $URL -o gh.deb
+          sudo dpkg -i gh.deb
+          gh --version
           
       - name: Delete workflow runs
         env:
@@ -25,7 +24,7 @@ jobs:
           echo "Processing $REPO..."
           
           # Fetch up to 500 IDs, oldest first
-          RUN_IDS=$(gh run list --repo "$REPO" --order asc --limit 4 --json databaseId -q '.[].databaseId')
+          RUN_IDS=$(gh run list --repo "$REPO" --order asc --limit 6 --json databaseId -q '.[].databaseId')
 
           # Check if there are any runs to delete
           if [ -z "$RUN_IDS" ]; then
