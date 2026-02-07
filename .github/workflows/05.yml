@@ -37,7 +37,7 @@ jobs:
         go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
         pip install requests
         python 5file-ul.py
-        mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')) ${{github.event.inputs.filename}}.txt"
+        mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]'))"
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
@@ -48,3 +48,13 @@ jobs:
         PD_TOKEN: ${{ secrets.PD_TOKEN }}
         FOLDER: "DL"
       run: python pd_uploader.py
+    - name: TF UL
+      run: |
+        pip install playwright==1.41.0
+        playwright install-deps
+        playwright install chromium
+        wget https://raw.githubusercontent.com/youcmd/xafv/refs/heads/tfit/tfit.py
+        while read -r file; do
+          [ -f "DL/$file" ] || continue
+          python tfit.py -o output/link.txt "DL/$file"
+        done < <(ls -v "DL")
