@@ -10,13 +10,12 @@ jobs:
     steps:
       - name: Delete all environments via GH CLI
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ENV_DELETE_TOKEN }}
         run: |
-          # 1. Get the list of all environment names
-          # 2. Loop through and delete each one
-          environments=$(gh api repos/${{ github.repository }}/environments --jq '.environments[].name')
+          environments=$(gh api --paginate repos/${{ github.repository }}/environments --jq '.environments[].name')
           
           for env in $environments; do
             echo "Deleting environment: $env"
-            gh api --method DELETE repos/${{ github.repository }}/environments/$env
+            gh api --method DELETE "repos/${{ github.repository }}/environments/$env" || echo "Failed to delete $env"
+            sleep 0.5
           done
