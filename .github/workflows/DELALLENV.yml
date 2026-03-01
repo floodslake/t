@@ -1,6 +1,6 @@
 name: Delete All Environments
 on:
-  workflow_dispatch: # Allows you to trigger this manually
+  workflow_dispatch: # Manual trigger from the "Actions" tab
 
 jobs:
   delete-environments:
@@ -9,10 +9,8 @@ jobs:
       deployments: write
     steps:
       - name: Delete all deployment environments
-        uses: strac-io/delete-deployment-environment@v2
+        uses: strumwolf/delete-deployment-environment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Use '*' to match all environment names
-          environment: '*'
-          # This ensures it deletes the environment record, not just the deployment
-          only-remove-deployments: false
+          environment: '*' # Matches all environments
+          all: true       # Forces removal of all associated deployments
