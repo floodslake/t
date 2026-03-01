@@ -1,6 +1,6 @@
 name: Delete All Environments
 on:
-  workflow_dispatch: # Manual trigger from the "Actions" tab
+  workflow_dispatch: 
 
 jobs:
   delete-environments:
@@ -12,5 +12,7 @@ jobs:
         uses: strumwolf/delete-deployment-environment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment: '*' # Matches all environments
-          all: true       # Forces removal of all associated deployments
+          environment: '*'
+          # This tells the action to delete the environment itself, 
+          # not just the deployment history.
+          onlyRemoveDeployments: false
