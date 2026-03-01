@@ -1,21 +1,60 @@
-name: Delete All Environments
+name: Delete All Environments (Force Clean)
+
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger from the Actions tab
 
 jobs:
-  delete-all:
+  cleanup-environments:
     runs-on: ubuntu-latest
+    # Explicitly requesting permissions just in case, 
+    # though the PAT will override these.
     permissions:
       deployments: write
+      contents: read
+
     steps:
-      - name: Delete all environments via GH CLI
+      - name: Bulk Delete Environments
         env:
+          # Use your PAT secret here
           GH_TOKEN: ${{ secrets.ENV_DELETE_TOKEN }}
         run: |
-          environments=$(gh api --paginate repos/${{ github.repository }}/environments --jq '.environments[].name')
-          
+          echo "🚀 Starting mass environment deletion..."
+
+          # 1. Fetch ALL environment names using pagination
+          # We use --limit 2000 to ensure we catch all 500+ environments
+          environments=$(gh api --paginate "/repos/${{ github.repository }}/environments" --jq '.environments[].name')
+
+          if [ -z "$environments" ]; then
+            echo "✅ No environments found to delete."
+            exit 0
+          fi
+
+          count=$(echo "$environments" | wc -l)
+          echo "📊 Found $count environments. Commencing deletion..."
+
+          # 2. Loop through each environment and delete
           for env in $environments; do
-            echo "Deleting environment: $env"
-            gh api --method DELETE "repos/${{ github.repository }}/environments/$env" || echo "Failed to delete $env"
+            # URL encode the environment name for safety (handles spaces/@ symbols)
+            ENCODED_ENV=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$env'''))")
+            
+            echo -n "🗑️ Deleting '$env'... "
+            
+            # Perform the DELETE request
+            RESPONSE=$(gh api --method DELETE "/repos/${{ github.repository }}/environments/$ENCODED_ENV" 2>&1 || true)
+
+            if [[ $RESPONSE == *"403"* ]]; then
+              echo "❌ FAILED (403 Forbidden)"
+              echo "   Check: Does your PAT have 'Environments: Write' permissions?"
+              echo "   Check: Are there 'Protected' environment rules (Reviewers) blocking this?"
+            elif [[ $RESPONSE == *"204"* ]] || [ -z "$RESPONSE" ]; then
+              echo "✅ SUCCESS"
+            else
+              echo "⚠️ UNKNOWN STATUS: $RESPONSE"
+            fi
+
+            # 3. Rate Limit Buffer
+            # 0.3s delay prevents triggering GitHub's secondary anti-abuse limits
             sleep 0.5
           done
+
+          echo "🏁 Process finished."
