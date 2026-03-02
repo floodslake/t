@@ -50,9 +50,9 @@ jobs:
       run: python pd_uploader.py
     - name: TF UL
       run: |
-        pip install playwright
-        playwright install-deps
-        playwright install chromium
+        pip install --quiet playwright
+        playwright install-deps > /dev/null
+        playwright install chromium > /dev/null
         wget https://raw.githubusercontent.com/youcmd/xafv/refs/heads/tfit/tfit.py
         while read -r file; do
           [ -f "DL/$file" ] || continue
