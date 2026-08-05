@@ -34,8 +34,8 @@ jobs:
         GO_FOLDER: ${{ secrets.GO_FOLDER }}
         FOLDER: "DL"
       run: |
-        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O
-        pip install requests
+        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O && echo "1F Success"
+        pip install --quiet requests
         python 5file-ul.py
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')).txt"
     - name: Upload Artifact
