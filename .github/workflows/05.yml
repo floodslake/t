@@ -23,7 +23,7 @@ jobs:
         chmod +x go-ul
         sudo cp go-ul /usr/local/bin/go-ul
         sudo rm output/.gitkeep DL/.gitkeep UL/.gitkeep
-    - name: Downloading TS
+    - name: Downloading
       timeout-minutes: 360
       run: sudo aria2c -d DL -x 4 --enable-dht=true --seed-time=0 --referer="${{github.event.inputs.refs}}" --user-agent="${{github.event.inputs.ua}}" "${{github.event.inputs.url}}"
     - name: Uploading Video
@@ -34,10 +34,11 @@ jobs:
         GO_FOLDER: ${{ secrets.GO_FOLDER }}
         FOLDER: "DL"
       run: |
-        go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O && echo "1F Success"
+        echo "1F... " && { go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O > /dev/null 2>&1 && echo "success" || echo "fail"; }
         pip install --quiet requests
         python 5file-ul.py
         mv 'output/link.txt' "output/$(echo $(date +'[%Y-%m-%d]')).txt"
+      # echo "1F" && go-ul ftp -d 'DL/' -r -u '${{ env.FTP_1F }}' -O > /dev/null 2>&1 && echo "success" || echo "fail"
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
