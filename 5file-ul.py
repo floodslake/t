@@ -37,12 +37,12 @@ try:
   print(f"New Folder {code}:{folderId} is created")
   
   for file in sorted(os.listdir(folder)):
-    ul_command = f'curl -F "token={userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile'
+    ul_command = f'curl -X POST -H "Authorization: Bearer {userToken}" -F "folderId={folderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile'
     print(f"https://gofile.io/d/{code}")
     os.system(ul_command)
     print_cmd = f'echo https://gofile.io/d/{code} >> "output/link.txt"'
     os.system(print_cmd)
 except:
   for file in sorted(os.listdir(folder)):
-    ul_command = f'curl -F "token={userToken}" -F "folderId={TempFolderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile >> "output/link.txt"'
+    ul_command = f'curl -X POST -H "Authorization: Bearer {userToken}" -F "folderId={TempFolderId}" -F "file=@{folder}/{file}" https://upload.gofile.io/contents/uploadFile >> "output/link.txt"'
     os.system(ul_command)
