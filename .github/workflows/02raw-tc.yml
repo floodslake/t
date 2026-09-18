@@ -22,9 +22,12 @@ jobs:
         python-version: "3.10"
     - name: Installing
       run : |
+        sudo add-apt-repository universe
+        sudo apt install libfuse2
         wget -q 'https://github.com/youcmd/ffmpegbuildlinux/releases/latest/download/ffmpeg-linux.7z'
         wget -O streamlink.AppImage "https://github.com/streamlink/streamlink-appimage/releases/download/5.5.1-2/streamlink-5.5.1-2-cp311-cp311-manylinux2014_x86_64.AppImage"
         chmod +x streamlink.AppImage
+        cp streamlink.AppImage /usr/local/bin/streamlink.AppImage
         7z x ffmpeg-linux.7z -o/usr/local/bin/ && rm ffmpeg-linux.7z
         chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/ffplay
         chmod a+rx go-ul
