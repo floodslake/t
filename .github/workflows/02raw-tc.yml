@@ -22,6 +22,7 @@ jobs:
         python-version: "3.10"
     - name: Installing
       run : |
+        echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
         sudo add-apt-repository universe
         sudo apt install libfuse2
         wget -O streamlink.AppImage "https://github.com/streamlink/streamlink-appimage/releases/download/5.5.1-2/streamlink-5.5.1-2-cp311-cp311-manylinux2014_x86_64.AppImage"
